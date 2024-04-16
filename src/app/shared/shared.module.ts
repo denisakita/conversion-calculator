@@ -31,6 +31,7 @@ import {MatDividerModule} from "@angular/material/divider";
 
 const MaterialModules = [
   MatSlideToggleModule,
+  MatSnackBarModule,
   FormsModule,
   ReactiveFormsModule,
   MatToolbarModule,

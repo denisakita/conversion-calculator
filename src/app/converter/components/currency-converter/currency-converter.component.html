@@ -1,1 +1,29 @@
-<p>currency-converter works!</p>
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h2>Currency Converter</h2>
+  <form [formGroup]="currencyForm" (ngSubmit)="convert()" fxLayout="column" fxLayoutAlign="center start">
+    <mat-form-field>
+      <mat-label>Amount</mat-label>
+      <input matInput formControlName="amount">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>From Currency</mat-label>
+      <mat-select formControlName="fromCurrency">
+        <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>To Currency</mat-label>
+      <mat-select formControlName="toCurrency">
+        <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Convert</button>
+  </form>
+
+  <div *ngIf="result" fxLayout="column" fxLayoutAlign="center start">
+    <p> Result :  {{ result }}</p>
+  </div>
+</div>
