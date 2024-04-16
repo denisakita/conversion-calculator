@@ -1,10 +1,19 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {CurrencyConverterComponent, LengthConverterComponent} from "./components";
+import {CommonModule} from "@angular/common";
 
-const routes: Routes = [];
+const routes: Routes = [
+  {path: 'currency-converter', component: CurrencyConverterComponent, pathMatch: 'full'},
+  {path: 'length-converter', component: LengthConverterComponent},
+
+];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes)
+  ],
   exports: [RouterModule]
 })
 export class ConverterRoutingModule {

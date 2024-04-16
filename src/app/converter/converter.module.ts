@@ -1,16 +1,19 @@
 import {NgModule} from '@angular/core';
-import {BrowserModule} from '@angular/platform-browser';
 import {ConverterRoutingModule} from "./converter-routing.module";
-import {CurrencyConverterComponent} from "./components/currency-converter/currency-converter.component";
-import {LengthConverterComponent} from "./components/length-converter/length-converter.component";
+import * as fromComponents from "./components";
+import {CommonModule} from "@angular/common";
+import {HttpClientModule} from "@angular/common/http";
+import {FlexModule} from "@angular/flex-layout";
 
 @NgModule({
   declarations: [
-    CurrencyConverterComponent,
-    LengthConverterComponent
+    ...fromComponents.components,
+
   ],
   imports: [
-    BrowserModule,
+    CommonModule,
+    HttpClientModule,
+    FlexModule,
     ConverterRoutingModule
   ],
 })
