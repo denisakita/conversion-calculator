@@ -17,7 +17,7 @@ export class CurrencyConverterComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private currencyService: CurrencyService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
   }
 
@@ -62,7 +62,8 @@ export class CurrencyConverterComponent implements OnInit {
         if (data && data.exchange_rates && data.exchange_rates[toCurrency]) {
           const rate = data.exchange_rates[toCurrency];
           const convertedAmount = amount * rate;
-          this.result = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+          // this.result = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
+          this.result = this.formatResult(amount, fromCurrency, convertedAmount, toCurrency);
         } else {
           this.openSnackBar('Invalid data format or missing exchange rate information', 'Close');
         }
@@ -71,6 +72,19 @@ export class CurrencyConverterComponent implements OnInit {
         this.openSnackBar('Invalid data format or missing exchange rate information', 'Close');
       }
     );
+  }
+
+  formatResult(originalAmount: number, fromCurrency: string, convertedAmount: number, toCurrency: string): string {
+    switch (toCurrency) {
+      case 'USD':
+        return `$${convertedAmount.toFixed(2)}`;
+      case 'EUR':
+        return `€${convertedAmount.toFixed(2)}`;
+      case 'GBP':
+        return `£${convertedAmount.toFixed(2)}`;
+      default:
+        return `${convertedAmount.toFixed(2)} ${toCurrency}`;
+    }
   }
 
   openSnackBar(message: string, action: string) {

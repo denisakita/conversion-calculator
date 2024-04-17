@@ -7,7 +7,6 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import {ConverterModule} from "./converter/converter.module";
 import {HttpClientModule} from "@angular/common/http";
 import {ErrorPageComponent} from './shared/components/error-page/error-page.component';
-import {SharedModule} from "./shared/shared.module";
 
 @NgModule({
   declarations: [
