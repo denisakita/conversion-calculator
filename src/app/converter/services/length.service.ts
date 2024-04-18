@@ -8,7 +8,8 @@ export class LengthService {
   lengthUnits: string[] = [];
   allLengthUnits: string[] = [];
 
-  private readonly LENGTH_UNITS_KEY = 'length_units';
+  // private readonly LENGTH_UNITS_KEY = 'length_units';
+  readonly LENGTH_UNITS_KEY = 'length_units';
   private readonly INITIAL_LENGTH_UNITS = ['Meter (m)', 'Yard (yd)', 'Inch (in)'];
 
   private readonly ALL_LENGTH_UNITS = [
