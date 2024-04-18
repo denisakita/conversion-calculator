@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {ErrorPageComponent} from "./shared/components/error-page/error-page.component";
 
 const routes: Routes = [
   {path: '', redirectTo: 'currency-converter', pathMatch: 'full'},
@@ -8,7 +7,6 @@ const routes: Routes = [
     path: '',
     loadChildren: () => import('./converter/converter.module').then(m => m.ConverterModule),
   },
-  {path: 'error-page', component: ErrorPageComponent},
 
   {path: '**', redirectTo: 'currency-converter', pathMatch: 'full'}
 
