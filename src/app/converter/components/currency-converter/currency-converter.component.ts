@@ -25,7 +25,7 @@ export class CurrencyConverterComponent implements OnInit {
 
   ngOnInit() {
     this.currencyForm = this.formBuilder.group({
-      amount: [null, Validators.required],
+      amount: [null, [Validators.required, Validators.pattern(/^-?\d*(\.\d+)?$/)]],
       fromCurrency: ['', Validators.required],
       toCurrency: ['', Validators.required]
     });
@@ -50,6 +50,7 @@ export class CurrencyConverterComponent implements OnInit {
   convert() {
     if (this.currencyForm.invalid || !this.currencyForm.get('amount') ||
       !this.currencyForm.get('fromCurrency') || !this.currencyForm.get('toCurrency')) {
+      this.openSnackBar('Please fill all the fields with valid values', 'Close');
       return;
     }
 

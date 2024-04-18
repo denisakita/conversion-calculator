@@ -27,7 +27,7 @@ export class LengthConverterComponent implements OnInit {
 
   ngOnInit() {
     this.lengthForm = this.formBuilder.group({
-      inputValue: [null, Validators.required],
+      inputValue: [null, [Validators.required, Validators.pattern(/^-?\d*(\.\d+)?$/)]],
       inputUnit: ['Meter (m)', Validators.required],
       outputUnit: ['Inch (in)', Validators.required]
     });
@@ -38,7 +38,12 @@ export class LengthConverterComponent implements OnInit {
 
 
   convert(): void {
-    if (this.lengthForm.invalid) return;
+    if (this.lengthForm.invalid) {
+      this.snackBar.open('Please fill all the fields with valid values', 'Dismiss', {
+        duration: 3000
+      });
+      return;
+    }
 
     const inputValue = this.lengthForm.get('inputValue')!.value;
     const inputUnit = this.lengthForm.get('inputUnit')!.value;

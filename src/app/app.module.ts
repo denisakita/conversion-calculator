@@ -6,12 +6,10 @@ import {AppComponent} from './app.component';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {ConverterModule} from "./converter/converter.module";
 import {HttpClientModule} from "@angular/common/http";
-import {ErrorPageComponent} from './shared/components/error-page/error-page.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ErrorPageComponent,
   ],
   imports: [
     BrowserModule,
