@@ -35,4 +35,14 @@
       Length Converter
     </button>
   </div>
+
+  <div *ngIf="historicalRates.length > 0" class="historical-rates-container">
+    <h3 class="historical-title">Historical Rates</h3>
+    <ul class="historical-list">
+      <li *ngFor="let rate of historicalRates" class="historical-item">
+        {{ rate.from }} to {{ rate.to }}: {{ rate.rate }}
+      </li>
+    </ul>
+  </div>
+
 </div>

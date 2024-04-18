@@ -26,12 +26,14 @@ export class CurrencyConverterComponent implements OnInit {
   ngOnInit() {
     this.currencyForm = this.formBuilder.group({
       amount: [1, Validators.required],
-      fromCurrency: ['USD', Validators.required],
-      toCurrency: ['EUR', Validators.required]
+      fromCurrency: ['', Validators.required],
+      toCurrency: ['', Validators.required]
     });
 
     this.getCurrenciesList();
+    // this.fetchHistoricalRates();
   }
+
 
   getCurrenciesList() {
     this.currencyService.getAvailableCurrencies().subscribe(
@@ -66,6 +68,8 @@ export class CurrencyConverterComponent implements OnInit {
           const convertedAmount = amount * rate;
           // this.result = `${amount} ${fromCurrency} = ${convertedAmount.toFixed(2)} ${toCurrency}`;
           this.result = this.formatResult(amount, fromCurrency, convertedAmount, toCurrency);
+          this.historicalRates.push({from: fromCurrency, to: toCurrency, rate: rate});
+
         } else {
           this.openSnackBar('Invalid data format or missing exchange rate information', 'Close');
         }
@@ -99,4 +103,15 @@ export class CurrencyConverterComponent implements OnInit {
   redirectToLengthConverter() {
     this.router.navigateByUrl('/length-converter');
   }
+
+  // fetchHistoricalRates() {
+  //   this.currencyService.getHistoricalRates().subscribe(
+  //     (data: any) => {
+  //       this.historicalRates = data;
+  //     },
+  //     (error: any) => {
+  //       console.error('Error fetching historical rates:', error);
+  //     }
+  //   );
+  // }
 }

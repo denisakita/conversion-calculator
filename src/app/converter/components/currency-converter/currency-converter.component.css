@@ -51,3 +51,25 @@
   justify-content: space-around;
   margin-top: 20px;
 }
+
+.historical-rates-container {
+  margin-top: 20px;
+}
+
+.historical-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.historical-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.historical-item {
+  margin-top: 5px;
+  font-size: 1.2rem;
+  color: #666;
+}
