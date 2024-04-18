@@ -104,6 +104,8 @@ export class CurrencyConverterComponent implements OnInit {
     this.router.navigateByUrl('/length-converter');
   }
 
+  // API_HISTORICAL has a problem with to many requests
+
   // fetchHistoricalRates() {
   //   this.currencyService.getHistoricalRates().subscribe(
   //     (data: any) => {
