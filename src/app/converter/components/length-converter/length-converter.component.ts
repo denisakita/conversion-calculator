@@ -38,32 +38,22 @@ export class LengthConverterComponent implements OnInit {
 
   convert(): void {
     if (this.lengthForm.invalid) return;
+    console.log(this.lengthForm)
 
     const inputValue = this.lengthForm.get('inputValue')!.value;
     const inputUnit = this.lengthForm.get('inputUnit')!.value;
     const outputUnit = this.lengthForm.get('outputUnit')!.value;
+    console.log(outputUnit)
 
-    let convertedValue: number;
-
-    if (inputUnit === 'm' && outputUnit === 'in') {
-      convertedValue = inputValue * 39.3701;
-    } else if (inputUnit === 'm' && outputUnit === 'yd') {
-      convertedValue = inputValue * 1.09361;
-    } else if (inputUnit === 'yd' && outputUnit === 'm') {
-      convertedValue = inputValue / 1.09361;
-    } else if (inputUnit === 'yd' && outputUnit === 'in') {
-      convertedValue = inputValue * 36;
-    } else if (inputUnit === 'in' && outputUnit === 'm') {
-      convertedValue = inputValue / 39.3701;
-    } else if (inputUnit === 'in' && outputUnit === 'yd') {
-      convertedValue = inputValue / 36;
-    } else {
-      convertedValue = inputValue; // Default case: units are the same
+    try {
+      this.result = this.lengthService.convert(inputValue, inputUnit, outputUnit);
+    } catch (error:any) {
+      console.error(error);
+      this.snackBar.open(`Conversion error: ${error.message}`, 'Dismiss', {
+        duration: 3000
+      });
     }
-
-    this.result = convertedValue;
   }
-
 
   redirectToCurrencyConverter() {
     this.router.navigateByUrl('/currency-converter');
