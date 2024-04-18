@@ -23,8 +23,8 @@
     <button mat-raised-button color="primary" type="submit" class="convert-button">Convert</button>
   </form>
 
-  <div *ngIf="result !== null" class="result-container">
-    <p class="result-text">Result: {{ result | number: '1.2-2' }}</p>
+  <div *ngIf="result" class="result-container">
+    <p class="result-text">Result: {{ result }}</p>
   </div>
 
   <div class="button-row">

@@ -138,19 +138,25 @@ export class LengthService {
     return this.allLengthUnits;
   }
 
-  convert(inputValue: number, inputUnit: string, outputUnit: string): number {
+  convert(inputValue: number, inputUnit: string, outputUnit: string): string {
     if (inputUnit === outputUnit) {
-      return inputValue;
+      return `${inputValue} ${this.getSymbol(inputUnit)}`;
     }
 
     const conversionFactorKey = `${inputUnit}->${outputUnit}`;
     const conversionFactor = this.CONVERSION_FACTORS[conversionFactorKey];
 
     if (conversionFactor !== undefined) {
-      return inputValue * conversionFactor;
+      const result = (inputValue * conversionFactor).toFixed(2)
+      const symbol = this.getSymbol(outputUnit);
+      return `${result} ${symbol}`;
+
     } else {
       throw new Error(`Conversion from ${inputUnit} to ${outputUnit} is not supported.`);
     }
   }
 
+  getSymbol(outputUnit: string): string {
+    return outputUnit.substring(outputUnit.indexOf('(') + 1, outputUnit.indexOf(')'));
+  }
 }

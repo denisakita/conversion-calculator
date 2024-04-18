@@ -13,8 +13,9 @@ import {MatSnackBar} from "@angular/material/snack-bar";
 })
 export class LengthConverterComponent implements OnInit {
   lengthForm: FormGroup = new FormGroup<any>({});
-  result: number | null = null;
+  result: string = '';
   lengthUnits: string[] = [];
+  symbol: string = '';
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
@@ -44,7 +45,10 @@ export class LengthConverterComponent implements OnInit {
     const outputUnit = this.lengthForm.get('outputUnit')!.value;
 
     try {
+
       this.result = this.lengthService.convert(inputValue, inputUnit, outputUnit);
+      this.symbol = this.lengthService.getSymbol(outputUnit);
+
     } catch (error: any) {
       console.error(error);
       this.snackBar.open(`Conversion error: ${error.message}`, 'Dismiss', {
