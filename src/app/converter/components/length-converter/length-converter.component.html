@@ -1,1 +1,40 @@
-<p>length-converter works!</p>
+<div fxLayout="column" fxLayoutAlign="center center">
+  <h2>Length Converter</h2>
+  <form [formGroup]="lengthForm" (ngSubmit)="convert()"
+        fxLayout="column" fxLayoutAlign="center start">
+    <mat-form-field>
+      <mat-label>Input Value</mat-label>
+      <input matInput formControlName="inputValue">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Input Unit</mat-label>
+      <mat-select formControlName="inputUnit">
+        <mat-option *ngFor="let unit of lengthUnits" [value]="unit">{{ unit }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Output Unit</mat-label>
+      <mat-select formControlName="outputUnit">
+        <mat-option *ngFor="let unit of lengthUnits" [value]="unit">{{ unit }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" type="submit">Convert</button>
+  </form>
+
+  <div *ngIf="result !== null" fxLayout="column" fxLayoutAlign="center start">
+    <br>
+    <p> Result :  {{ result | number: '1.2-2' }} </p>
+  </div>
+  <br>
+
+  <p *ngIf="lengthUnits.length > 3">Newly Added Unit: {{ lengthUnits[lengthUnits.length - 1] }}</p>
+
+  <button mat-raised-button color="accent" (click)="addNewLengthMeasure()">Add New Length Measure</button>
+  <br>
+  <br>
+
+  <button mat-raised-button color="accent" (click)="redirectToCurrencyConverter()">Go to Currency Converter</button>
+</div>
