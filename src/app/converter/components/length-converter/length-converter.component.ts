@@ -38,16 +38,14 @@ export class LengthConverterComponent implements OnInit {
 
   convert(): void {
     if (this.lengthForm.invalid) return;
-    console.log(this.lengthForm)
 
     const inputValue = this.lengthForm.get('inputValue')!.value;
     const inputUnit = this.lengthForm.get('inputUnit')!.value;
     const outputUnit = this.lengthForm.get('outputUnit')!.value;
-    console.log(outputUnit)
 
     try {
       this.result = this.lengthService.convert(inputValue, inputUnit, outputUnit);
-    } catch (error:any) {
+    } catch (error: any) {
       console.error(error);
       this.snackBar.open(`Conversion error: ${error.message}`, 'Dismiss', {
         duration: 3000
@@ -71,7 +69,6 @@ export class LengthConverterComponent implements OnInit {
         this.lengthForm.get('outputUnit')?.setValue(selectedUnit);
 
         this.lengthService.addLengthUnit(selectedUnit);
-        this.lengthUnits.push(selectedUnit);
 
         this.snackBar.open(`Newly added unit: ${selectedUnit}`, 'Dismiss', {
           duration: 3000
