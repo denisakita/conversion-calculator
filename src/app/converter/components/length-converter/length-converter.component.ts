@@ -57,9 +57,6 @@ export class LengthConverterComponent implements OnInit {
     }
   }
 
-  redirectToCurrencyConverter() {
-    this.router.navigateByUrl('/currency-converter');
-  }
 
   addNewLengthMeasure() {
     const dialogRef = this.dialog.open(AddLengthComponent, {
@@ -79,5 +76,23 @@ export class LengthConverterComponent implements OnInit {
         });
       }
     });
+  }
+
+
+  swapUnits(): void {
+    const inputUnitControl = this.lengthForm.get('inputUnit');
+    const outputUnitControl = this.lengthForm.get('outputUnit');
+
+    if (inputUnitControl && outputUnitControl) {
+      const tempValue = inputUnitControl.value;
+      inputUnitControl.setValue(outputUnitControl.value);
+      outputUnitControl.setValue(tempValue);
+
+      this.convert();
+    }
+  }
+
+  redirectToCurrencyConverter() {
+    this.router.navigateByUrl('/currency-converter');
   }
 }

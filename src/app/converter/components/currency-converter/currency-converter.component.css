@@ -38,7 +38,7 @@
 }
 
 .divider {
-  margin: 20px auto;
+  padding-bottom: 7px;
 }
 
 
@@ -46,6 +46,7 @@
   font-size: 20px;
   padding-bottom: 5px;
 }
+
 .button-row {
   display: flex;
   justify-content: space-around;

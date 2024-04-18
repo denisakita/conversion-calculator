@@ -25,7 +25,7 @@ export class CurrencyConverterComponent implements OnInit {
 
   ngOnInit() {
     this.currencyForm = this.formBuilder.group({
-      amount: [1, Validators.required],
+      amount: [null, Validators.required],
       fromCurrency: ['', Validators.required],
       toCurrency: ['', Validators.required]
     });
@@ -104,6 +104,20 @@ export class CurrencyConverterComponent implements OnInit {
     this.router.navigateByUrl('/length-converter');
   }
 
+  swapUnits() {
+    const fromCurrencyControl = this.currencyForm.get('fromCurrency');
+    const toCurrencyControl = this.currencyForm.get('toCurrency');
+
+    if (fromCurrencyControl && toCurrencyControl) {
+      const tempValue = fromCurrencyControl.value;
+      fromCurrencyControl.setValue(toCurrencyControl.value);
+      toCurrencyControl.setValue(tempValue);
+
+      this.convert();
+    }
+
+  }
+
   // API_HISTORICAL has a problem with to many requests
 
   // fetchHistoricalRates() {
@@ -116,4 +130,5 @@ export class CurrencyConverterComponent implements OnInit {
   //     }
   //   );
   // }
+
 }
