@@ -1,36 +1,38 @@
-<div fxLayout="column" fxLayoutAlign="center center">
-  <h2>Currency Converter</h2>
-  <form [formGroup]="currencyForm" (ngSubmit)="convert()"
-        fxLayout="column" fxLayoutAlign="center start">
-    <mat-form-field>
-      <mat-label>Amount</mat-label>
-      <input matInput formControlName="amount">
+<div class="currency-converter-container">
+  <h2 class="converter-title">Currency Converter</h2>
+
+  <form [formGroup]="currencyForm" (ngSubmit)="convert()" class="converter-form">
+    <mat-form-field class="amount-input">
+      <input matInput formControlName="amount" placeholder="Enter Amount">
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="currency-select">
       <mat-label>From Currency</mat-label>
       <mat-select formControlName="fromCurrency">
-        <mat-option *ngFor="let currency of currencies"
-                    [value]="currency">{{ currency }}
-        </mat-option>
+        <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field class="currency-select">
       <mat-label>To Currency</mat-label>
       <mat-select formControlName="toCurrency">
         <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</mat-option>
       </mat-select>
     </mat-form-field>
 
-    <button mat-raised-button color="primary" type="submit">Convert</button>
+    <button mat-raised-button color="primary" type="submit" class="convert-button">Convert</button>
+
   </form>
 
-  <div *ngIf="result" fxLayout="column" fxLayoutAlign="center start">
-    <br>
-    <p> Result :  {{ result }} </p>
+  <div *ngIf="result" class="result-container">
+    <p class="result-text">Result: {{ result }}</p>
   </div>
 
-  <button mat-raised-button color="accent" (click)="redirectToLengthConverter()">Go to Length Converter</button>
-
+  <mat-divider class="divider"></mat-divider>
+  <div class="button-row">
+    <button mat-button color="primary" (click)="redirectToLengthConverter()" class="button-item">
+      <mat-icon>straighten</mat-icon>
+      Length Converter
+    </button>
+  </div>
 </div>

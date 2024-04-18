@@ -1,0 +1,62 @@
+.length-converter-container {
+  text-align: center;
+}
+
+.converter-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.converter-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-value {
+  width: 80%;
+  margin-bottom: 15px;
+}
+
+.unit-select {
+  width: 80%;
+  margin-bottom: 15px;
+}
+
+.convert-button {
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.result-container {
+  margin-top: 20px;
+}
+
+.result-text {
+  font-size: 18px;
+}
+
+.add-measure-button,
+.currency-converter-button {
+  width: 80%;
+  margin-top: 20px;
+}
+
+
+.button-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.button-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.button-item mat-icon {
+  font-size: 20px;
+  padding-bottom: 5px;
+}
