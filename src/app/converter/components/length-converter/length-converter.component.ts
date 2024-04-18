@@ -4,6 +4,7 @@ import {Router} from "@angular/router";
 import {MatDialog} from "@angular/material/dialog";
 import {AddLengthComponent} from "../add-length/add-length.component";
 import {LengthService} from "../../services";
+import {MatSnackBar} from "@angular/material/snack-bar";
 
 @Component({
   selector: 'app-length-converter',
@@ -13,14 +14,14 @@ import {LengthService} from "../../services";
 export class LengthConverterComponent implements OnInit {
   lengthForm: FormGroup = new FormGroup<any>({});
   result: number | null = null;
-  lengthUnits: string[] = ['Meter (m)', 'Yard (yd)', 'Inch (in)'];
+  lengthUnits: string[] = [];
 
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               public dialog: MatDialog,
-              private lengthService: LengthService
+              private lengthService: LengthService,
+              private snackBar: MatSnackBar,
   ) {
-
   }
 
   ngOnInit() {
@@ -30,8 +31,10 @@ export class LengthConverterComponent implements OnInit {
       outputUnit: ['Inch (in)', Validators.required]
     });
 
+    // Initialize lengthUnits
     this.lengthUnits = this.lengthService.lengthUnits;
   }
+
 
   convert(): void {
     if (this.lengthForm.invalid) return;
@@ -39,7 +42,6 @@ export class LengthConverterComponent implements OnInit {
     const inputValue = this.lengthForm.get('inputValue')!.value;
     const inputUnit = this.lengthForm.get('inputUnit')!.value;
     const outputUnit = this.lengthForm.get('outputUnit')!.value;
-
 
     let convertedValue: number;
 
@@ -56,11 +58,12 @@ export class LengthConverterComponent implements OnInit {
     } else if (inputUnit === 'in' && outputUnit === 'yd') {
       convertedValue = inputValue / 36;
     } else {
-      convertedValue = inputValue;
+      convertedValue = inputValue; // Default case: units are the same
     }
 
     this.result = convertedValue;
   }
+
 
   redirectToCurrencyConverter() {
     this.router.navigateByUrl('/currency-converter');
@@ -78,6 +81,11 @@ export class LengthConverterComponent implements OnInit {
         this.lengthForm.get('outputUnit')?.setValue(selectedUnit);
 
         this.lengthService.addLengthUnit(selectedUnit);
+        this.lengthUnits.push(selectedUnit);
+
+        this.snackBar.open(`Newly added unit: ${selectedUnit}`, 'Dismiss', {
+          duration: 3000
+        });
       }
     });
   }
