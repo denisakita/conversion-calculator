@@ -50,4 +50,38 @@ describe('LengthService', () => {
     expect(service.lengthUnits);
 
   });
+
+  it('should return all length units', () => {
+    const allLengthUnits = service.getAllLengthUnits();
+
+    expect(allLengthUnits).toEqual([
+      'Foot (ft)',
+      'Kilometer (km)',
+      'Mile (mi)',
+      'Centimeter (cm)',
+      'Millimeter (mm)',]);
+  });
+
+  it('should convert input value from one unit to another', () => {
+
+    let result = service.convert(10, 'Meter (m)', 'Meter (m)');
+    expect(result).toEqual('10 m');
+
+    result = service.convert(1, 'Meter (m)', 'Inch (in)');
+    expect(result).toEqual('39.37 in');
+
+    result = service.convert(12, 'Inch (in)', 'Meter (m)');
+    expect(result).toEqual('0.30 m');
+
+  });
+
+  it('should return symbol for the given unit', () => {
+    let symbol = service.getSymbol('Meter (m)');
+    expect(symbol).toEqual('m');
+
+    symbol = service.getSymbol('Inch (in)');
+    expect(symbol).toEqual('in');
+
+  });
+
 });

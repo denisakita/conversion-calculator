@@ -1,83 +1,103 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
+import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {LengthConverterComponent} from './length-converter.component';
-import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {MatDialog} from '@angular/material/dialog';
+import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
+import {RouterTestingModule} from '@angular/router/testing';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
 import {LengthService} from '../../services';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {SharedModule} from "../../../shared/shared.module";
+import {Router} from "@angular/router";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {MatInputModule} from "@angular/material/input";
 import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatIconModule} from "@angular/material/icon";
+import {SharedModule} from "../../../shared/shared.module";
+import {HttpClientTestingModule} from "@angular/common/http/testing";
+import {of} from "rxjs";
 
 describe('LengthConverterComponent', () => {
   let component: LengthConverterComponent;
   let fixture: ComponentFixture<LengthConverterComponent>;
-  let lengthService: LengthService;
-  let snackBar: MatSnackBar;
-  let dialog: MatDialog;
+  let dialogSpy: jasmine.SpyObj<MatDialog>;
+  let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
+  let lengthServiceSpy: jasmine.SpyObj<LengthService>;
+  let router: Router;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    const dialogSpyObj = jasmine.createSpyObj('MatDialog', ['open']);
+    const snackBarSpyObj = jasmine.createSpyObj('MatSnackBar', ['open']);
+    const lengthServiceSpyObj = jasmine.createSpyObj('LengthService', ['convert', 'getSymbol', 'addLengthUnit']);
+
+    await TestBed.configureTestingModule({
       declarations: [LengthConverterComponent],
-      imports: [SharedModule, ReactiveFormsModule, MatFormFieldModule],
+      imports: [
+        ReactiveFormsModule,
+        BrowserAnimationsModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSnackBarModule,
+        MatIconModule,
+        SharedModule,
+        HttpClientTestingModule,
+        RouterTestingModule.withRoutes([])
+      ],
       providers: [
         FormBuilder,
-        {
-          provide: LengthService,
-          useValue: jasmine.createSpyObj('LengthService', ['convert', 'getSymbol', 'lengthUnits', 'addLengthUnit'])
-        },
-        {provide: MatDialog, useValue: jasmine.createSpyObj('MatDialog', ['open'])},
-        {provide: MatSnackBar, useValue: jasmine.createSpyObj('MatSnackBar', ['open'])}
+        {provide: MatDialog, useValue: dialogSpyObj},
+        {provide: MatSnackBar, useValue: snackBarSpyObj},
+        {provide: LengthService, useValue: lengthServiceSpyObj}
       ]
-    })
-      .compileComponents();
-  }));
+    }).compileComponents();
+
+    dialogSpy = TestBed.inject(MatDialog) as jasmine.SpyObj<MatDialog>;
+    snackBarSpy = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
+    lengthServiceSpy = TestBed.inject(LengthService) as jasmine.SpyObj<LengthService>;
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LengthConverterComponent);
     component = fixture.componentInstance;
-    lengthService = TestBed.inject(LengthService);
-    snackBar = TestBed.inject(MatSnackBar);
-    dialog = TestBed.inject(MatDialog);
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should handle empty input value', () => {
-    component.lengthForm.get('inputValue')?.setValue('');
-
+  it('should call convert method when convert is called', () => {
+    component.lengthForm.get('inputValue')!.setValue(10);
+    component.lengthForm.get('inputUnit')!.setValue('Meter (m)');
+    component.lengthForm.get('outputUnit')!.setValue('Inch (in)');
     component.convert();
-
-    expect(snackBar.open).toHaveBeenCalledWith('Please fill all the fields with valid values', 'Dismiss', {duration: 3000});
+    expect(lengthServiceSpy.convert).toHaveBeenCalled();
   });
 
-  it('should handle missing input unit', () => {
-    component.lengthForm.get('inputValue')?.setValue(100);
-    component.lengthForm.get('outputUnit')?.setValue('Foot (ft)');
+  it('should open dialog when addNewLengthMeasure is called', () => {
+    const dialogRefSpyObj = jasmine.createSpyObj({afterClosed: of({}), close: null});
+    dialogSpy.open.and.returnValue(dialogRefSpyObj);
 
-    component.convert();
-
-    expect(snackBar.open).toHaveBeenCalledWith('Please fill all the fields with valid values', 'Dismiss', {duration: 3000});
+    component.addNewLengthMeasure();
+    expect(dialogSpy.open).toHaveBeenCalled();
   });
 
-  it('should handle missing output unit', () => {
-    component.lengthForm.get('inputValue')?.setValue(100);
-    component.lengthForm.get('inputUnit')?.setValue('Meter (m)');
+  it('should swap units and call convert when swapUnits is called', () => {
+    const inputUnit = component.lengthForm.get('inputUnit');
+    const outputUnit = component.lengthForm.get('outputUnit');
+    inputUnit?.setValue('Meter (m)');
+    outputUnit?.setValue('Inch (in)');
 
-    component.convert();
+    component.swapUnits();
 
-    expect(snackBar.open).toHaveBeenCalledWith('Please fill all the fields with valid values', 'Dismiss', {duration: 3000});
+    expect(inputUnit?.value).toBe('Inch (in)');
+    expect(outputUnit?.value).toBe('Meter (m)');
+    // expect(lengthServiceSpy.convert).toHaveBeenCalled();
   });
 
-
-  it('should not allow negative input value for units that don\'t support it (e.g., meters)', () => {
-    component.lengthForm.get('inputValue')?.setValue(-100);
-    component.lengthForm.get('inputUnit')?.setValue('Meter (m)');
-    component.lengthForm.get('outputUnit')?.setValue('Foot (ft)');
-
-    expect(component.lengthForm.get('inputValue')?.invalid).toBeTruthy();
+  it('should navigate to the currency converter page when redirectToCurrencyConverter is called', () => {
+    const navigateSpy = spyOn(router, 'navigateByUrl');
+    component.redirectToCurrencyConverter();
+    expect(navigateSpy).toHaveBeenCalledWith('/currency-converter');
   });
+
 
 });

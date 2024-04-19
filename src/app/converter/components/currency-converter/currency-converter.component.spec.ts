@@ -1,128 +1,185 @@
 import {ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {ReactiveFormsModule} from '@angular/forms';
-import {MatSnackBar} from '@angular/material/snack-bar';
-import {CurrencyConverterComponent} from './currency-converter.component';
-import {CurrencyService} from '../../services';
-import {Router} from '@angular/router';
+import {MatSnackBar, MatSnackBarModule} from '@angular/material/snack-bar';
+import {RouterTestingModule} from '@angular/router/testing';
 import {of, throwError} from 'rxjs';
+import {CurrencyService} from '../../services';
+import {CurrencyConverterComponent} from './currency-converter.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatIconModule} from "@angular/material/icon";
 import {SharedModule} from "../../../shared/shared.module";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {Router} from "@angular/router";
 
 describe('CurrencyConverterComponent', () => {
   let component: CurrencyConverterComponent;
   let fixture: ComponentFixture<CurrencyConverterComponent>;
-  let currencyServiceSpy: jasmine.SpyObj<CurrencyService>;
-  let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
-  let routerSpy: jasmine.SpyObj<Router>;
+  let currencyService: jasmine.SpyObj<CurrencyService>;
+  let snackBar: jasmine.SpyObj<MatSnackBar>;
+  let router: Router;
 
   beforeEach(async () => {
-    const currencyService = jasmine.createSpyObj('CurrencyService', ['getAvailableCurrencies', 'getExchangeRate']);
-    const snackBar = jasmine.createSpyObj('MatSnackBar', ['open']);
-    const router = jasmine.createSpyObj('Router', ['navigateByUrl']);
+    const currencyServiceSpy = jasmine.createSpyObj('CurrencyService', ['getAvailableCurrencies', 'getExchangeRate']);
+    const snackBarSpy = jasmine.createSpyObj('MatSnackBar', ['open']);
 
     await TestBed.configureTestingModule({
       declarations: [CurrencyConverterComponent],
-      imports: [ReactiveFormsModule, SharedModule, BrowserAnimationsModule],
+      imports: [
+        BrowserAnimationsModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        MatInputModule,
+        MatFormFieldModule,
+        MatSnackBarModule,
+        MatIconModule,
+        SharedModule,
+        HttpClientTestingModule,
+        RouterTestingModule.withRoutes([])
+      ],
       providers: [
-        {provide: CurrencyService, useValue: currencyService},
-        {provide: MatSnackBar, useValue: snackBar},
-        {provide: Router, useValue: router}
+        {provide: CurrencyService, useValue: currencyServiceSpy},
+        {provide: MatSnackBar, useValue: snackBarSpy}
       ]
     }).compileComponents();
 
-    currencyServiceSpy = TestBed.inject(CurrencyService) as jasmine.SpyObj<CurrencyService>;
-    snackBarSpy = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
-    routerSpy = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    currencyService = TestBed.inject(CurrencyService) as jasmine.SpyObj<CurrencyService>;
+    snackBar = TestBed.inject(MatSnackBar) as jasmine.SpyObj<MatSnackBar>;
+
+
+    currencyService.getAvailableCurrencies.and.returnValue(of([]));
+    currencyService.getExchangeRate.and.returnValue(of({}));
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(CurrencyConverterComponent);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should initialize form with required fields', () => {
-    expect(component.currencyForm.get('amount')).toBeTruthy();
-    expect(component.currencyForm.get('fromCurrency')).toBeTruthy();
-    expect(component.currencyForm.get('toCurrency')).toBeTruthy();
+  it('should handle form validation errors on convert()', () => {
+    const invalidFormValues = [
+      {amount: null, fromCurrency: 'USD', toCurrency: 'EUR'},
+      {amount: 100, fromCurrency: '', toCurrency: 'EUR'},
+      {amount: 100, fromCurrency: 'USD', toCurrency: ''}
+    ];
+
+    invalidFormValues.forEach(invalidValue => {
+      component.currencyForm.patchValue(invalidValue);
+      component.convert();
+
+      expect(snackBar.open).toHaveBeenCalledWith('Please fill all the fields with valid values', 'Close', jasmine.any(Object));
+    });
   });
 
-  it('should fetch available currencies on init', () => {
-    const mockCurrencies = ['USD', 'EUR', 'GBP'];
-    currencyServiceSpy.getAvailableCurrencies.and.returnValue(of(mockCurrencies));
 
-    component.ngOnInit();
+  it('should handle error while fetching currencies list', () => {
+    currencyService.getAvailableCurrencies.and.returnValue(throwError('Error'));
 
-    expect(currencyServiceSpy.getAvailableCurrencies).toHaveBeenCalled();
-    expect(component.currencies).toEqual(mockCurrencies);
+    component.getCurrenciesList();
+
+    expect(snackBar.open).toHaveBeenCalledWith('Error fetching available currencies: Error', 'Close', jasmine.any(Object));
   });
 
-  it('should convert currency correctly', fakeAsync(() => {
+  it('should populate currencies list on successful getAvailableCurrencies call', () => {
+    const availableCurrencies = ['USD', 'EUR', 'GBP'];
+    currencyService.getAvailableCurrencies.and.returnValue(of(availableCurrencies));
+
+    component.getCurrenciesList();
+    fixture.detectChanges();
+
+    expect(component.currencies).toEqual(availableCurrencies);
+  });
+
+  // Logic Tests
+
+  it('should handle error while converting currencies', fakeAsync(() => {
     const amount = 100;
     const fromCurrency = 'USD';
     const toCurrency = 'EUR';
-    const mockExchangeRate = {exchange_rates: {EUR: 0.85}};
-    currencyServiceSpy.getExchangeRate.and.returnValue(of(mockExchangeRate));
-
-    component.currencyForm.setValue({amount, fromCurrency, toCurrency});
-    component.convert();
-    tick();
-
-    expect(component.result).toEqual('€85.00');
-    expect(component.historicalRates.length).toBe(1);
-    expect(component.historicalRates[0]).toEqual({from: fromCurrency, to: toCurrency, rate: 0.85});
-  }));
-
-  it('should handle conversion error', fakeAsync(() => {
-    currencyServiceSpy.getExchangeRate.and.returnValue(throwError('Error'));
+    currencyService.getExchangeRate.and.returnValue(throwError('Error'));
+    component.currencyForm.patchValue({amount, fromCurrency, toCurrency});
 
     component.convert();
-    tick();
+    tick(5000);
 
-    expect(snackBarSpy.open).toHaveBeenCalledWith('Invalid data format or missing exchange rate information', 'Close', {duration: 5000});
+
+    expect(snackBar.open).toHaveBeenCalledWith('Invalid data format or missing exchange rate information', 'Close', jasmine.any(Object));
   }));
 
-  it('should display error snack bar when fetching available currencies fails', fakeAsync(() => {
-    currencyServiceSpy.getAvailableCurrencies.and.returnValue(throwError('Error'));
 
-    component.ngOnInit();
-    tick();
+  it('should show conversion result on successful getExchangeRate call', fakeAsync(() => {
+    const amount = 100;
+    const fromCurrency = 'USD';
+    const toCurrency = 'EUR';
+    const exchangeRate = 0.85;
+    const expectedResult = `€${(amount * exchangeRate).toFixed(2)}`;
 
-    expect(snackBarSpy.open).toHaveBeenCalledWith('Error fetching available currencies: Error', 'Close', {duration: 5000});
-  }));
+    currencyService.getExchangeRate.and.returnValue(of({exchange_rates: {[toCurrency]: exchangeRate}}));
 
-  it('should handle form validation error', () => {
-    component.currencyForm.setValue({amount: null, fromCurrency: null, toCurrency: null});
+    component.currencyForm.patchValue({amount, fromCurrency, toCurrency});
     component.convert();
+    tick(5000);
 
-    expect(snackBarSpy.open).toHaveBeenCalledWith('Please fill all the fields with valid values', 'Close', {duration: 5000});
+    expect(component.result).toEqual(expectedResult);
+  }));
+
+  it('should format the converted amount correctly based on the target currency', () => {
+    const originalAmount = 100;
+    const fromCurrency = 'USD';
+    let convertedAmount: number;
+    let formattedResult: string;
+
+    // Test formatting for USD
+    const toCurrencyUSD = 'USD';
+    convertedAmount = 100;
+    formattedResult = component.formatResult(originalAmount, fromCurrency, convertedAmount, toCurrencyUSD);
+    expect(formattedResult).toEqual('$100.00');
+
+    // Test formatting for EUR
+    const toCurrencyEUR = 'EUR';
+    convertedAmount = 85.5;
+    formattedResult = component.formatResult(originalAmount, fromCurrency, convertedAmount, toCurrencyEUR);
+    expect(formattedResult).toEqual('€85.50');
+
+    // Test formatting for GBP
+    const toCurrencyGBP = 'GBP';
+    convertedAmount = 70;
+    formattedResult = component.formatResult(originalAmount, fromCurrency, convertedAmount, toCurrencyGBP);
+    expect(formattedResult).toEqual('£70.00');
+
+    // Test formatting for other currencies
+    const toCurrencyOther = 'CAD';
+    convertedAmount = 125;
+    formattedResult = component.formatResult(originalAmount, fromCurrency, convertedAmount, toCurrencyOther);
+    expect(formattedResult).toEqual('125.00 CAD');
   });
 
-  it('should redirect to length converter page', () => {
+  it('should navigate to the length converter page when redirectToLengthConverter is called', () => {
+    const navigateSpy = spyOn(router, 'navigateByUrl');
     component.redirectToLengthConverter();
-
-    expect(routerSpy.navigateByUrl).toHaveBeenCalledWith('/length-converter');
+    expect(navigateSpy).toHaveBeenCalledWith('/length-converter');
   });
 
-  it('should swap units', () => {
-    component.currencyForm.setValue({fromCurrency: 'USD', toCurrency: 'EUR'});
+  it('should swap "from" and "to" currency units and call convert method when swapUnits is called', () => {
+
+    component.currencyForm.patchValue({fromCurrency: 'USD', toCurrency: 'EUR'});
+
+    spyOn(component, 'convert');
 
     component.swapUnits();
 
     expect(component.currencyForm.get('fromCurrency')?.value).toEqual('EUR');
     expect(component.currencyForm.get('toCurrency')?.value).toEqual('USD');
+
+    expect(component.convert).toHaveBeenCalled();
   });
 
-  it('should format result correctly', () => {
-    const originalAmount = 100;
-    const convertedAmount = 85;
-
-    expect(component.formatResult(originalAmount, 'USD', convertedAmount, 'EUR')).toEqual('€85.00');
-    expect(component.formatResult(originalAmount, 'USD', convertedAmount, 'GBP')).toEqual('85.00 GBP');
-    expect(component.formatResult(originalAmount, 'USD', convertedAmount, 'CAD')).toEqual('85.00 CAD');
-  });
-});
+})
