@@ -1,0 +1,54 @@
+<div class="currency-converter-container">
+  <h2 class="converter-title">Currency Converter</h2>
+
+  <form [formGroup]="currencyForm" (ngSubmit)="convert()" class="converter-form">
+    <mat-form-field class="amount-input">
+      <input matInput formControlName="amount" placeholder="Enter Amount">
+    </mat-form-field>
+
+    <mat-form-field class="currency-select">
+      <mat-label>From Currency</mat-label>
+      <mat-select formControlName="fromCurrency">
+        <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="currency-select">
+      <mat-label>To Currency</mat-label>
+      <mat-select formControlName="toCurrency">
+        <mat-option *ngFor="let currency of currencies" [value]="currency">{{ currency }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-button color="primary" (click)="swapUnits()" class="button-item">
+      <mat-icon>swap_horiz</mat-icon>
+      Swap Units
+    </button>
+    <mat-divider class="divider"></mat-divider>
+
+    <button mat-raised-button color="primary" type="submit" class="convert-button">Convert</button>
+
+  </form>
+
+  <div *ngIf="result" class="result-container">
+    <p class="result-text">Result: {{ result }}</p>
+  </div>
+
+  <mat-divider class="divider"></mat-divider>
+  <div class="button-row">
+    <button mat-button color="primary" (click)="redirectToLengthConverter()" class="button-item">
+      <mat-icon>straighten</mat-icon>
+      Length Converter
+    </button>
+  </div>
+
+  <div *ngIf="historicalRates.length > 0" class="historical-rates-container">
+    <h3 class="historical-title">Historical Rates</h3>
+    <ul class="historical-list">
+      <li *ngFor="let rate of historicalRates" class="historical-item">
+        {{ rate.from }} to {{ rate.to }}: {{ rate.rate }}
+      </li>
+    </ul>
+  </div>
+
+</div>

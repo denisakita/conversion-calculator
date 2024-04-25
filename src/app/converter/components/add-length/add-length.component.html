@@ -1,0 +1,20 @@
+<h2 mat-dialog-title class="dialog-title">Add New Length Measure</h2>
+<div mat-dialog-content fxLayout="column" fxLayoutAlign="center center" [formGroup]="lengthForm" class="dialog-content">
+  <mat-form-field class="unit-select">
+    <mat-label>Select Measure Unit</mat-label>
+    <mat-select formControlName="selectedUnit">
+      <mat-option *ngFor="let unit of lengthUnits" [value]="unit">{{ unit }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions fxLayout="row" fxLayoutAlign="center center" class="button-row">
+  <button class="button-item" mat-button (click)="onClose()">
+    <mat-icon>close</mat-icon>
+    Cancel
+  </button>
+  <button mat-raised-button color="primary" (click)="onAddClick()" class="button-item">
+    <mat-icon>add</mat-icon>
+    Add
+  </button>
+</div>
