@@ -1,0 +1,30 @@
+.dialog-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.dialog-content {
+  text-align: center;
+}
+
+.unit-select {
+  width: 80%;
+  margin-bottom: 15px;
+}
+
+
+.button-row {
+  margin-top: 20px;
+}
+
+.button-item {
+  display: flex;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.button-item mat-icon {
+  font-size: 20px;
+  padding-bottom: 5px;
+}

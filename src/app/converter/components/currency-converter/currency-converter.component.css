@@ -1,0 +1,76 @@
+.currency-converter-container {
+  text-align: center;
+}
+
+.converter-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.converter-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.amount-input {
+  width: 80%;
+  margin-bottom: 15px;
+}
+
+.currency-select {
+  width: 80%;
+  margin-bottom: 15px;
+}
+
+.convert-button {
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.result-container {
+  margin-top: 20px;
+}
+
+.result-text {
+  font-size: 18px;
+}
+
+.divider {
+  padding-bottom: 7px;
+}
+
+
+.button-item mat-icon {
+  font-size: 20px;
+  padding-bottom: 5px;
+}
+
+.button-row {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.historical-rates-container {
+  margin-top: 20px;
+}
+
+.historical-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.historical-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.historical-item {
+  margin-top: 5px;
+  font-size: 1.2rem;
+  color: #666;
+}
