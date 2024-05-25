@@ -8,11 +8,9 @@ import {catchError, map, Observable} from "rxjs";
 })
 export class CurrencyService {
   API_KEY = `${environment.API_KEY}`;
-  API_URL = `${environment.API_URL}`;
+  API_URL = `${environment.API_HOST}`;
 
-  // private API_KEY = `${environment.API_KEY}`;
-  // private API_URL = `${environment.API_URL}`;
-  private API_HISTORICAL = `${environment.API_HISTORICAL}`;
+  // private API_HISTORICAL = `${environment.API_HISTORICAL}`;
 
 
   constructor(private http: HttpClient) {
